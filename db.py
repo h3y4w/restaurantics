@@ -97,6 +97,58 @@ class DB(object):
         def find_record_by_id(id):
             return DB.session.query(DB.WeatherVar).filter_by(id=id).first()
 
+    class Hashtag (Base):
+        __tablename__ = "hashtag"
+        id = sqlalchemy.Column(Integer, primary_key=True)
+        tweet_id = sqlalchemy.Column(Integer)
+        name = sqlalchemy.Column(String)
+
+        def __init__(self, info):
+            self.tweet_id = info["tweet_id"]
+            self.name = info["name"]
+
+        def to_dict(self):
+            return {"id": self.id, "tweet_id": self.tweet_id, "tag": self.name}
+
+
+        @staticmethod
+        def create(info):
+            obj = DB.Hashtag(info)
+            DB.add(obj)
+            return obj
+
+        @staticmethod
+        def get_all():
+            return DB.session.query(DB.Hashtag).all()
+
+    class Tweet (Base):
+        __tablename__ = "tweets"
+        id = sqlalchemy.Column(Integer, primary_key=True)
+        date = sqlalchemy.Column(DateTime)
+        media_url = sqlalchemy.Column(String, nullable=True)
+        handle = sqlalchemy.Column(String)
+
+        def __init__(self, info):
+            self.date = info["date"]
+            self.media_url = info["media_url"]
+            self.handle = info["handle"]
+
+        def to_dict(self):
+            return {"id": self.id, "handle": self.handle, "date": self.date.String("%m/%d/%y")}
+
+        @staticmethod
+        def create(info):
+            obj = DB.Tweet(info)
+            DB.add(obj)
+            return obj
+
+        @staticmethod
+        def get_all():
+            return DB.session.query(DB.Tweet).all()
+
+
+
+
     class City(Base):
         __tablename__ = 'city'
         id = sqlalchemy.Column(Integer, primary_key=True)
